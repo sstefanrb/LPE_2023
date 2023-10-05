@@ -23,7 +23,7 @@ exp_22175018<-jsonlite::fromJSON("https://sedeaplicaciones.minetur.gob.es/Servic
 # git status = info about a repo
 # git commit = Add a comment
 # git add . =. Add the current dir to the entire repo
-# git push -u origin main = send to the remote repo (Github)
+# git push -u origin main = send to the emote repo (Github)
 
 
 # CLI COMMANDS ------------------------------------------------------------
