@@ -8,6 +8,7 @@
 install.packages(c("tidyverse", "dplyr", "janitor"))
 install.packages(c("xlsx"))
 install.packages(c("rJava"))
+install.packages(c("readr"))
 
 library("dplyr","janitor","xlsx")
 
@@ -39,6 +40,7 @@ exp_22175018 <- jsonlite::fromJSON("https://sedeaplicaciones.minetur.gob.es/Serv
 # mkdir = create a dir
 # cd = change dir
 # clear = limpiar terminal
+# set wd 
 
 # BASIC INSTRUCTIONS ------------------------------------------------------
 
