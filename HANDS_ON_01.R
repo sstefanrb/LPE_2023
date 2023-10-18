@@ -5,12 +5,14 @@
 
 
 # LOADING LIBS ------------------------------------------------------------
-install.packages(c("tidyverse", "dplyr", "janitor"))
-install.packages(c("xlsx"))
-install.packages(c("rJava"))
-install.packages(c("readr"))
-
-library("dplyr","janitor","xlsx")
+install.packages (c("tidyverse", "dplyr", "janitor"))
+install.packages("leaflet")
+install.packages("openxlsx")
+library("tidyverse","dplyr","janitor", "jsonlite")
+library(tidyverse)
+library(leaflet)
+library("dplyr","janitor")
+library(openxlsx)
 
 
 # LOADING DATA ------------------------------------------------------------
@@ -67,10 +69,42 @@ cd %>% glimpse()
 # DEALING W DATA ----------------------------------------------------------
 
 villa_boa_gas <- cd %>% select(precio_gasoleo_a, rotulo, direccion, localidad) %>% 
-  filter(localidad=="VILLAVICIOSA DE ODON" | localidad== "BOADILLA DEL MONTE") %>% 
+  filter(rotulo=="BALLENOIL", localidad == "MADRID") %>% 
   arrange(precio_gasoleo_a) %>% View()
-gas_max <- cd %>% select(precio_gasoleo_a, rotulo, direccion, provincia) %>% filter(provincia == "MADRID") %>% arrange(precio_gasoleo_a) 
+Dgas_max <- cd %>% select(precio_gasoleo_a, rotulo, direccion, provincia) %>% filter(provincia == "MADRID") %>% arrange(precio_gasoleo_a) 
+
+gas_mad_ballenoil <- cd %>% select(precio_gasoleo_a, rotulo, direccion, municipio, provincia, c_p) %>% 
+  filter(provincia == "MADRID" & rotulo == "BALLENOIL") %>% 
+  arrange(precio_gasoleo_a) %>% View()
+
+gas_mad_1_55 <- cd %>% select(precio_gasoleo_a, rotulo, direccion, municipio, provincia,latitud,longitud_wgs84) %>% 
+  filter(provincia == "TOLEDO" & precio_gasoleo_a < 1.70) %>% 
+  arrange(desc(precio_gasoleo_a))
+
+gas_mad_1_55 %>% leaflet() %>% addTiles() %>% 
+  addCircleMarkers(lat = ~latitud,lng = ~longitud_wgs84, popup = ~rotulo, label = ~precio_gasoleo_a)
+
+gasoleo_a_1_55 <- clean_data %>% 
+  select(precio_gasoleo_a, rotulo, direccion, provincia, latitud, longitud_wgs84, municipio) %>% 
+  filter(provincia=="MADRID" || precio_gasoleo_a<1.50) %>% 
+  arrange(desc(precio_gasoleo_a)) %>% write.xlsx("gasole_a_1_55.xls")
+
+cd %>%
+  select(precio_gasoleo_a, rotulo, direccion, provincia, latitud, longitud_wgs84, municipio) %>%
+  filter(localidad == "MADRID" | precio_gasoleo_a < 1.50) %>% 
+  arrange(desc(precio_gasoleo_a)) %>%
+  write.xlsx("gasole_a_1_50.xlsx")
+
+
+average_price <- mean(cd$precio_gasoleo_a, na.rm = TRUE)
+
+cd <- cd %>%
+  mutate(is_low_cost = ifelse(precio_gasoleo_a < average_price, "Low Cost", "Not Low Cost"))
+
+View(cd)
+
 
 # STORING DATA ------------------------------------------------------------
 write.xslx(gas_max, "gas_max.csv")
 xlsx::write.xlsx(gas_max, "gas_max.xlsx")
+
