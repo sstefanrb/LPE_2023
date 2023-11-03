@@ -21,12 +21,17 @@ exp_22175018 <- jsonlite::fromJSON("https://sedeaplicaciones.minetur.gob.es/Serv
 
 data <- readxl::read_excel("codigo.xls")
 
+poblacion <- readxl::read_excel("pobmun22.xlsx")
+
 #Eliminar filas que estan mal
 
+colnames(poblacion) <- poblacion[1, ]
+poblacion <- poblacion
 colnames(data) <- data[1, ]
 data <- data[-1,]
 
 View(data)
+View(poblacion)
 
 # SHORTCUTS ---------------------------------------------------------------
 
@@ -131,11 +136,19 @@ View(average_price_clm)
 # Realiza el inner join y agrega la columna de Comunidad Autónoma a la tabla cd
 cd <- merge(cd, data, by.x = "idccaa", by.y = "CODIGO", all.x = TRUE)
 
+mejorloc <- merge(cd, poblacion, by.x = "municipio", by.y = "NOMBRE", all.x = TRUE)
+
+View(mejorloc)
+
 # Ahora, cd contiene la columna "Comunidad_Autonoma" agregada.
 
 View(cd)
 
-  
+
+
+
+
+#
 
 # STORING DATA ------------------------------------------------------------
 write.xslx(gas_max, "gas_max.csv")
